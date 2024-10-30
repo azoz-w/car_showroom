@@ -21,3 +21,15 @@ spring:
     locations: classpath:db/migration
     schemas: public
     validate-on-migrate: true
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+  # Optional: Disable error handling endpoint documentation
+  show-actuator: false
+
+  # Optional: Package to scan
+  packages-to-scan: com.challenge.showrooms.controller

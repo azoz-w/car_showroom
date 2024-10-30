@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.Optional;
 
 public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificationExecutor<Car> {
+    boolean existsByVinAndDeletedFalse(String vin);
 
     Page<Car> findByDeletedFalse(Pageable pageable);
 

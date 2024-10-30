@@ -48,12 +48,12 @@ public class ShowroomService {
     public ShowroomResDto getShowroom(BigDecimal commercialRegistrationNumber) {
         return showroomRepository.findByCommercialRegistrationNumberAndDeletedFalse(commercialRegistrationNumber)
                 .map(this::mapToDetailResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Showroom not found with id: " + commercialRegistrationNumber));
+                .orElseThrow(() -> new ResourceNotFoundException("Showroom not found with commercialRegistrationNumber: " + commercialRegistrationNumber));
     }
 
     public ShowroomResDto updateShowroom(BigDecimal commercialRegistrationNumber, UpdateShowroomReqDto request) {
         Showroom showroom = showroomRepository.findByCommercialRegistrationNumberAndDeletedFalse(commercialRegistrationNumber)
-                .orElseThrow(() -> new ResourceNotFoundException("Showroom not found with id: " + commercialRegistrationNumber));
+                .orElseThrow(() -> new ResourceNotFoundException("Showroom not found with commercialRegistrationNumber: " + commercialRegistrationNumber));
 
         // Only update provided fields
         if (request.getContactNumber() != null) {

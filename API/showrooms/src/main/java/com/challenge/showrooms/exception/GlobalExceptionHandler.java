@@ -1,7 +1,7 @@
 package com.challenge.showrooms.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.challenge.showrooms.dto.error.ErrorResponse;
+import com.challenge.showrooms.dto.error.ValidationErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -73,19 +73,3 @@ public class GlobalExceptionHandler {
     }
 }
 
-@Data
-@AllArgsConstructor
-class ErrorResponse {
-    private int status;
-    private String message;
-    private LocalDateTime timestamp;
-}
-
-@Data
-@AllArgsConstructor
-class ValidationErrorResponse {
-    private int status;
-    private String message;
-    private LocalDateTime timestamp;
-    private Map<String, String> errors;
-}
