@@ -13,13 +13,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateShowroom_req_dto {
+public class CreateShowroomReqDto {
     @NotBlank(message = "Name is required")
     @Size(max = 100, message = "Name must not exceed 100 characters")
     private String name;
 
     @NotNull(message = "Commercial registration number is required")
     @Digits(integer = 10, fraction = 0, message = "Commercial registration number must be exactly 10 digits")
+    @Size(min = 10, max = 10, message = "Commercial registration number must be exactly 10 digits")
     private String commercialRegistrationNumber; // Changed to String for initial input
 
     @Size(max = 100, message = "Manager name must not exceed 100 characters")
@@ -27,6 +28,7 @@ public class CreateShowroom_req_dto {
 
     @NotNull(message = "Contact number is required")
     @Digits(integer = 15, fraction = 0, message = "Contact number must not exceed 15 digits")
+    @Size(max = 15, message = "Commercial registration number must be exactly 10 digits")
     private String contactNumber; // Changed to String for initial input
 
     @Size(max = 255, message = "Address must not exceed 255 characters")

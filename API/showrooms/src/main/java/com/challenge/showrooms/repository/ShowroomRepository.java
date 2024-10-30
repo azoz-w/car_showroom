@@ -13,6 +13,6 @@ public interface ShowroomRepository extends JpaRepository<Showroom, Long> {
     Page<Showroom> findByDeletedFalse(Pageable pageable);
 
     Optional<Showroom> findByIdAndDeletedFalse(Long id);
-
-    boolean existsByCommercialRegistrationNumberAndDeletedFalse(BigDecimal commercialRegistrationNumber);
+    Optional<Showroom> findByCommercialRegistrationNumberAndDeletedFalse(BigDecimal commercialRegistrationNumber);
+    boolean existsByCommercialRegistrationNumber(BigDecimal commercialRegistrationNumber);
 }
