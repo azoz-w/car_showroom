@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Showroom } from '../../core/models/showroom.model';
+import { Showroom } from '../../../core/models/showroom.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ShowroomService } from '../../core/services/showroom.service';
+import { ShowroomService } from '../../../core/services/showroom.service';
 import { CommonModule } from '@angular/common';
 import {
   FormGroup,
@@ -9,10 +9,10 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { ToastService } from '../../core/services/toast.service';
-import { Car } from '../../core/models/car.model';
-import { CarService } from '../../core/services/car.service';
-import { ModalComponent } from '../../core/components/modal/modal.component';
+import { ToastService } from '../../../core/services/toast.service';
+import { Car } from '../../../core/models/car.model';
+import { CarService } from '../../../core/services/car.service';
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-showroom-details',

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Showroom } from '../../core/models/showroom.model';
-import { ShowroomService } from '../../core/services/showroom.service';
-import { ModalComponent } from '../../core/components/modal/modal.component';
+import { Showroom } from '../../../core/models/showroom.model';
+import { ShowroomService } from '../../../core/services/showroom.service';
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import {
   FormBuilder,
   FormGroup,
@@ -10,8 +10,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { CreateShowroomComponent } from '../../core/components/create-showroom-component/create-showroom.component';
-import { ToastService } from '../../core/services/toast.service';
+import { CreateShowroomComponent } from '../../../shared/components/create-showroom-component/create-showroom.component';
+import { ToastService } from '../../../core/services/toast.service';
 import { RouterModule } from '@angular/router';
 
 @Component({
