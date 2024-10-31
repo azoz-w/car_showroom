@@ -1,0 +1,338 @@
+<div class="container mx-auto p-4">
+  <div>
+    <!-- Header with Back Button -->
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">Showroom Details</h1>
+      <div class="flex gap-2">
+        <button
+          (click)="toggleEditMode()"
+          class="px-4 py-2 text-blue-600 hover:text-blue-800 flex items-center"
+        >
+          @if(!isEditing){
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            />
+          </svg>
+          Edit } @else { Cancel }
+        </button>
+        <button
+          (click)="goBack()"
+          class="px-4 py-2 text-gray-600 hover:text-gray-800 flex items-center"
+        >
+          Back to List
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m8.25 4.5 7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    @if(showroom){ @if(!isEditing){
+    <!-- View Mode -->
+    <div class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Basic Information -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h2 class="text-lg font-semibold mb-4">Basic Information</h2>
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-4">
+              <span class="text-gray-600">Name:</span>
+              <span>{{ showroom.name }}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <span class="text-gray-600">Registration Number:</span>
+              <span>{{ showroom.commercialRegistrationNumber }}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <span class="text-gray-600">Contact Number:</span>
+              <span>{{ showroom.contactNumber }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h2 class="text-lg font-semibold mb-4">Additional Information</h2>
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-4">
+              <span class="text-gray-600">Manager:</span>
+              <span>{{ showroom.managerName || "Not specified" }}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <span class="text-gray-600">Address:</span>
+              <span>{{ showroom.address || "Not specified" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8">
+      <div>
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold">Cars in Showroom</h2>
+          <button
+            (click)="openAddCarModal()"
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center"
+          >
+            <svg
+              class="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            Add Car
+          </button>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="mb-4 flex gap-4">
+          <div class="flex-1">
+            <!-- <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearch()"
+              placeholder="Search by maker or model..."
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            /> -->
+          </div>
+        </div>
+
+        <!-- Cars Table -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white">
+            <thead>
+              <tr>
+                <th
+                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  VIN
+                </th>
+                <th
+                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Maker
+                </th>
+                <th
+                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Model
+                </th>
+                <th
+                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Year
+                </th>
+                <th
+                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Price
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              @if(cars.length === 0){
+              <tr>
+                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                  No cars found in this showroom
+                </td>
+              </tr>
+              } @else { @for(car of cars; track car.vin){
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {{ car.vin }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {{ car.maker }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {{ car.model }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {{ car.modelYear }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {{ car.price | currency }}
+                </td>
+              </tr>
+              } }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if(cars.length > 0){
+        <div class="flex justify-between items-center mt-4">
+          <div class="flex space-x-2">
+            <button
+              [disabled]="currentPage === 0"
+              (click)="changePage(currentPage - 1)"
+              class="px-4 py-2 border rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <button
+              (click)="changePage(currentPage + 1)"
+              class="px-4 py-2 border rounded"
+            >
+              Next
+            </button>
+            <div
+              class="px-4 py-2 border rounded disabled:opacity-50"
+              for="list"
+            >
+              <label for="pageSize" class="mr-2 text-gray-700">Size</label>
+              <select
+                id="pageSize"
+                #pageSize
+                (change)="changeSize(pageSize.value)"
+                class="px-2 py-1"
+              >
+                <option [value]="10">10</option>
+                <option [value]="25">25</option>
+                <option [value]="50">50</option>
+                <option [value]="100">100</option>
+              </select>
+            </div>
+          </div>
+          <div>Page {{ currentPage + 1 }} of {{ totalPages }}</div>
+        </div>
+        }
+      </div>
+    </div>
+    } @else {
+    <!-- Edit Mode -->
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Basic Information -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h2 class="text-lg font-semibold mb-4">Basic Information</h2>
+          <div class="space-y-4">
+            <!-- Read-only fields -->
+            <div class="space-y-2">
+              <label class="block text-gray-600">Name</label>
+              <input
+                type="text"
+                [value]="showroom.name"
+                disabled
+                class="w-full px-3 py-2 border rounded-lg bg-gray-100"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-gray-600">Registration Number</label>
+              <input
+                type="text"
+                [value]="showroom.commercialRegistrationNumber"
+                disabled
+                class="w-full px-3 py-2 border rounded-lg bg-gray-100"
+              />
+            </div>
+            <!-- Editable Contact Number -->
+            <div class="space-y-2">
+              <label class="block text-gray-600">Contact Number *</label>
+              <input
+                type="text"
+                formControlName="contactNumber"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-500]="isFieldInvalid('contactNumber')"
+              />
+              @if(isFieldInvalid('contactNumber')){
+              <div class="text-red-500 text-sm mt-1">
+                @if(editForm.get('contactNumber')?.errors?.['required']){
+                Contact number is required }
+                @if(editForm.get('contactNumber')?.errors?.['pattern']){ Must be
+                numeric and not exceed 15 digits }
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h2 class="text-lg font-semibold mb-4">Additional Information</h2>
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <label class="block text-gray-600">Manager Name</label>
+              <input
+                type="text"
+                formControlName="managerName"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-500]="isFieldInvalid('managerName')"
+              />
+              @if(isFieldInvalid('managerName')){
+              <div class="text-red-500 text-sm mt-1">
+                Manager name must not exceed 100 characters
+              </div>
+              }
+            </div>
+            <div class="space-y-2">
+              <label class="block text-gray-600">Address</label>
+              <textarea
+                formControlName="address"
+                rows="3"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                [class.border-red-500]="isFieldInvalid('address')"
+              ></textarea>
+              @if(isFieldInvalid('address')){
+              <div class="text-red-500 text-sm mt-1">
+                Address must not exceed 255 characters
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex justify-end space-x-3">
+        <button
+          type="button"
+          (click)="toggleEditMode()"
+          class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="editForm.invalid || isSubmitting"
+          class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span *ngIf="!isSubmitting">Save Changes</span>
+          <span *ngIf="isSubmitting">Saving...</span>
+        </button>
+      </div>
+    </form>
+    } } @else {
+    <div class="flex justify-center items-center h-48">
+      <div class="text-gray-500">Loading showroom details...</div>
+    </div>
+    }
+  </div>
+</div>
