@@ -1,6 +1,7 @@
 package com.challenge.showrooms.service;
 
 import com.challenge.showrooms.criteria.CarSpecifications;
+import com.challenge.showrooms.dto.CarSearchCriteria;
 import com.challenge.showrooms.dto.request.CreateCarReqDto;
 import com.challenge.showrooms.dto.response.CarListResDto;
 import com.challenge.showrooms.dto.response.CarResDto;
@@ -12,6 +13,7 @@ import com.challenge.showrooms.repository.CarRepository;
 import com.challenge.showrooms.repository.ShowroomRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,8 +25,10 @@ import java.math.BigDecimal;
 @Transactional
 @RequiredArgsConstructor
 public class CarService {
-    private final CarRepository carRepository;
-    private final ShowroomRepository showroomRepository;
+    @Autowired
+    private CarRepository carRepository;
+    @Autowired
+    private ShowroomRepository showroomRepository;
 
     public CarResDto createCar(BigDecimal commercialRegistrationNumber, CreateCarReqDto request) {
         // Find showroom first
@@ -50,13 +54,13 @@ public class CarService {
 
         return mapToResponse(savedCar);
     }
-    public Page<CarListResDto> listCars(String maker, String carShowroomName, Pageable pageable) {
-        Specification<Car> spec = Specification.where(CarSpecifications.notDeleted())
-                .and(CarSpecifications.withMaker(maker))
-                .and(CarSpecifications.withShowroomName(carShowroomName));
 
-        return carRepository.findAll(spec, pageable)
-                .map(this::mapToListResponse);
+    public Page<CarListResDto> findAllWithFilters(CarSearchCriteria criteria, Pageable pageable) {
+        Page<Car> cars = carRepository.findAll(
+                CarSpecifications.withFilters(criteria),
+                pageable
+        );
+        return cars.map(this::mapToListResponse);
     }
 
     private CarListResDto mapToListResponse(Car car) {
@@ -70,6 +74,7 @@ public class CarService {
                 .contactNumber(car.getShowroom().getContactNumber())
                 .build();
     }
+
     private CarResDto mapToResponse(Car car) {
         return CarResDto.builder()
                 .vin(car.getVin())

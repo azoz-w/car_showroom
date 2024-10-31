@@ -1,5 +1,6 @@
 package com.challenge.showrooms.controller;
 
+import com.challenge.showrooms.dto.CarSearchCriteria;
 import com.challenge.showrooms.dto.error.ErrorResponse;
 import com.challenge.showrooms.dto.error.ValidationErrorResponse;
 import com.challenge.showrooms.dto.request.CreateCarReqDto;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+
 @CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/api/car")
@@ -42,10 +44,10 @@ public class CarController {
                     description = "Successfully created car",
                     content = @Content(schema = @Schema(implementation = CarResDto.class))
             ), @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid input",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            ),
+            responseCode = "400",
+            description = "Invalid input",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+    ),
             @ApiResponse(
                     responseCode = "409",
                     description = "car with given vin number number already exists",
@@ -58,6 +60,7 @@ public class CarController {
             @Valid @RequestBody CreateCarReqDto request) {
         return carService.createCar(commercialRegistrationNumber, request);
     }
+
     @Operation(
             summary = "List all cars",
             description = "Returns a paginated list of cars with optional filtering"
@@ -76,20 +79,35 @@ public class CarController {
     })
     @GetMapping
     public Page<CarListResDto> listCars(
+            @RequestParam(required = false) String vin,
             @RequestParam(required = false) String maker,
-            @RequestParam(required = false) String carShowroomName,
+            @RequestParam(required = false) String model,
+            @RequestParam(required = false) BigDecimal modelYear,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) String showroomName,
+            @RequestParam(required = false) BigDecimal contactNumber,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "maker") String sortBy,
+            @RequestParam(defaultValue = "maker") String sort,
             @RequestParam(defaultValue = "asc") String direction) {
 
-        Pageable pageable = PageRequest.of(
+        CarSearchCriteria criteria = new CarSearchCriteria();
+        criteria.setVin(vin);
+        criteria.setMaker(maker);
+        criteria.setModel(model);
+        criteria.setModelYear(modelYear);
+        criteria.setMinPrice(minPrice);
+        criteria.setMaxPrice(maxPrice);
+        criteria.setShowroomName(showroomName);
+        criteria.setContactNumber(contactNumber);
+        PageRequest pageRequest = PageRequest.of(
                 page,
                 size,
                 Sort.Direction.fromString(direction),
-                sortBy
+                sort
         );
 
-        return carService.listCars(maker, carShowroomName, pageable);
+        return carService.findAllWithFilters(criteria, pageRequest);
     }
 }

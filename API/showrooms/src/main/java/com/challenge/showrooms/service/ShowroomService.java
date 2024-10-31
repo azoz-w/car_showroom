@@ -8,7 +8,6 @@ import com.challenge.showrooms.entity.Showroom;
 import com.challenge.showrooms.exception.DuplicateResourceException;
 import com.challenge.showrooms.exception.ResourceNotFoundException;
 import com.challenge.showrooms.repository.ShowroomRepository;
-import com.challenge.showrooms.service.util.ShowroomUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +20,6 @@ public class ShowroomService {
 
     @Autowired
     private ShowroomRepository showroomRepository;
-
-    private ShowroomUtil showroomUtil;
 
     public ShowroomResDto createShowroom(CreateShowroomReqDto request) {
         //TODO: add validation for unique elements,
