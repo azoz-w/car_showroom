@@ -1,0 +1,298 @@
+<div class="container mx-auto p-4">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold">Showrooms</h1>
+    <app-create-showroom (created)="loadShowrooms()"></app-create-showroom>
+  </div>
+
+  <!-- Add Showroom Button -->
+  <!-- <button (click)="openCreateDialog()" 
+            class="bg-blue-500 text-white px-4 py-2 rounded mb-4">
+      Add Showroom
+    </button> -->
+
+  <!-- Showroom List -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border rounded-lg">
+      <thead>
+        <tr>
+          <th
+            class="px-6 py-3 border-b cursor-pointer hover:text-blue-600"
+            (click)="sort('name')"
+          >
+            <div class="flex justify-start align-middle">
+              Name @if(sortField === 'name' && sortDirection === 'asc'){
+              <span class="ml-1 mt-1">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 15l7-7 7 7"
+                  /></svg></span
+              >} @if(sortField === 'name' && sortDirection === 'desc'){
+              <span class="ml-1 mt-1">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  /></svg></span
+              >}
+            </div>
+          </th>
+          <th
+            class="px-6 py-3 border-b hover:text-blue-600 cursor-pointer"
+            (click)="sort('commercialRegistrationNumber')"
+          >
+            <div class="flex justify-start align-middle">
+              Registration Number @if(sortField ===
+              'commercialRegistrationNumber' && sortDirection === 'asc'){
+              <span class="ml-1 mt-1">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 15l7-7 7 7"
+                  /></svg></span
+              >} @if(sortField === 'commercialRegistrationNumber' &&
+              sortDirection === 'desc'){
+              <span class="ml-1 mt-1">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  /></svg></span
+              >}
+            </div>
+          </th>
+          <th
+            class="px-6 py-3 border-b hover:text-blue-600 cursor-pointer"
+            (click)="sort('contactNumber')"
+          >
+            <div class="flex justify-start align-middle">
+              Contact Number @if(sortField === 'contactNumber' && sortDirection
+              === 'asc'){
+              <span class="ml-1 mt-1">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 15l7-7 7 7"
+                  /></svg></span
+              >} @if(sortField === 'contactNumber' && sortDirection === 'desc'){
+              <span class="ml-1 mt-1">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  /></svg></span
+              >}
+            </div>
+          </th>
+          <th class="px-6 py-3 border-b">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (showroom of showrooms; track showroom){
+        <tr>
+          <td class="px-6 py-4 border-b">{{ showroom.name }}</td>
+          <td class="px-6 py-4 border-b">
+            {{ showroom.commercialRegistrationNumber }}
+          </td>
+          <td class="px-6 py-4 border-b">{{ showroom.contactNumber }}</td>
+          <td class="px-6 py-4 border-b">
+            <button
+              [routerLink]="[
+                '/showroom',
+                showroom.commercialRegistrationNumber
+              ]"
+              class="text-blue-500 hover:text-blue-700 mr-2"
+            >
+              View
+            </button>
+            <button
+              (click)="editDetails(showroom)"
+              class="text-green-500 hover:text-green-700 mr-2"
+            >
+              edit
+            </button>
+            <button
+              (click)="deleteShowroom(showroom)"
+              class="text-red-500 hover:text-red-700"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="flex justify-between items-center mt-4">
+      <div class="flex space-x-2">
+        <button
+          [disabled]="currentPage === 0"
+          (click)="changePage(currentPage - 1)"
+          class="px-4 py-2 border rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <button
+          (click)="changePage(currentPage + 1)"
+          class="px-4 py-2 border rounded"
+        >
+          Next
+        </button>
+        <div class="px-4 py-2 border rounded disabled:opacity-50" for="list">
+          <label for="pageSize" class="mr-2 text-gray-700">Size</label>
+          <select
+            id="pageSize"
+            #pageSize
+            (change)="changeSize(pageSize.value)"
+            class="px-2 py-1"
+          >
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+        </div>
+      </div>
+      <div>Page {{ currentPage + 1 }} of {{ totalPages }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Details Modal -->
+@if(isModalOpen && selectedShowroom){
+<app-modal
+  [isOpen]="isModalOpen"
+  title="Edit Showroom"
+  (isOpenChange)="toggleModal()"
+>
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <!-- Read-only fields -->
+    <div class="grid grid-cols-2 gap-4">
+      <div class="text-gray-600">Name:</div>
+      <div>{{ selectedShowroom.name }}</div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="text-gray-600">Registration Number:</div>
+      <div>{{ selectedShowroom.commercialRegistrationNumber }}</div>
+    </div>
+
+    <!-- Editable fields -->
+    <div class="grid grid-cols-2 gap-4 items-start">
+      <div class="text-gray-600">Contact Number:</div>
+      <div>
+        <input
+          type="text"
+          formControlName="contactNumber"
+          class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [class.border-red-500]="isFieldInvalid('contactNumber')"
+        />
+        @if(isFieldInvalid('contactNumber')){
+        <div class="text-red-500 text-sm mt-1">
+          @if(editForm.get('contactNumber')?.errors?.['required']){ Contact
+          number is required }
+          @if(editForm.get('contactNumber')?.errors?.['pattern']){ Must be
+          numeric and not exceed 15 digits }
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 items-start">
+      <div class="text-gray-600">Manager Name:</div>
+      <div>
+        <input
+          type="text"
+          formControlName="managerName"
+          class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [class.border-red-500]="isFieldInvalid('managerName')"
+        />
+        @if(isFieldInvalid('managerName')){
+        <div class="text-red-500 text-sm mt-1">
+          Manager name must not exceed 100 characters
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 items-start">
+      <div class="text-gray-600">Address:</div>
+      <div>
+        <textarea
+          formControlName="address"
+          rows="3"
+          class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [class.border-red-500]="isFieldInvalid('address')"
+        ></textarea>
+        @if(isFieldInvalid('address')){
+        <div class="text-red-500 text-sm mt-1">
+          Address must not exceed 255 characters
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex justify-end space-x-3 pt-4">
+      <button
+        type="button"
+        (click)="toggleModal()"
+        class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        [disabled]="editForm.invalid || isSubmitting"
+        class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <span *ngIf="!isSubmitting">Save Changes</span>
+        <span *ngIf="isSubmitting">Saving...</span>
+      </button>
+    </div>
+  </form>
+</app-modal>
+}
