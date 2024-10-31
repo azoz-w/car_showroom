@@ -15,7 +15,7 @@ export class CarService {
     page: number,
     size: number,
     sort: string,
-    direction: string,
+    direction: string
     // search?: string
   ): Observable<any> {
     let params = new HttpParams()
@@ -29,5 +29,14 @@ export class CarService {
     // }
 
     return this.http.get(`${this.apiUrl}`, { params });
+  }
+  createCar(
+    commercialRegistrationNumber: string,
+    carData: any
+  ): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/${commercialRegistrationNumber}`,
+      carData
+    );
   }
 }

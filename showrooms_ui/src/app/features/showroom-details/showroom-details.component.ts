@@ -12,11 +12,12 @@ import {
 import { ToastService } from '../../core/services/toast.service';
 import { Car } from '../../core/models/car.model';
 import { CarService } from '../../core/services/car.service';
+import { ModalComponent } from '../../core/components/modal/modal.component';
 
 @Component({
   selector: 'app-showroom-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ModalComponent],
   templateUrl: './showroom-details.component.html',
   styleUrl: './showroom-details.component.css',
 })
@@ -34,6 +35,9 @@ export class ShowroomDetailsComponent implements OnInit {
   sortDirection = 'asc';
   searchTerm = '';
   isLoading = false;
+  isAddCarModalOpen = false;
+  addCarForm: FormGroup;
+  isSubmittingCar = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -50,6 +54,20 @@ export class ShowroomDetailsComponent implements OnInit {
       ],
       managerName: ['', [Validators.maxLength(100)]],
       address: ['', [Validators.maxLength(255)]],
+    });
+    this.addCarForm = this.fb.group({
+      vin: ['', [Validators.required, Validators.maxLength(25)]],
+      maker: ['', [Validators.required, Validators.maxLength(25)]],
+      model: ['', [Validators.required, Validators.maxLength(25)]],
+      modelYear: ['', [Validators.required, Validators.pattern('^\\d{4}$')]],
+      price: [
+        '',
+        [
+          Validators.required,
+          Validators.min(0),
+          Validators.pattern('^\\d{1,8}(\\.\\d{1,2})?$'),
+        ],
+      ],
     });
   }
 
@@ -93,11 +111,6 @@ export class ShowroomDetailsComponent implements OnInit {
     }
   }
 
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.editForm.get(fieldName);
-    return field ? field.invalid && (field.dirty || field.touched) : false;
-  }
-
   onSubmit() {
     if (this.editForm.valid && this.showroom) {
       this.isSubmitting = true;
@@ -125,7 +138,7 @@ export class ShowroomDetailsComponent implements OnInit {
   }
   loadCars() {
     // if (!this.showroom) return;
-    
+
     this.isLoading = true;
     this.carService
       .getShowroomCars(
@@ -133,7 +146,7 @@ export class ShowroomDetailsComponent implements OnInit {
         this.currentPage,
         this.pageSize,
         this.searchTerm,
-        this.sortDirection,
+        this.sortDirection
         // this.searchTerm
       )
       .subscribe({
@@ -153,9 +166,6 @@ export class ShowroomDetailsComponent implements OnInit {
     this.currentPage = 0;
     this.loadCars();
   }
-  openAddCarModal() {
-    // Implement add car modal
-  }
 
   changePage(page: number) {
     this.currentPage = page;
@@ -168,13 +178,67 @@ export class ShowroomDetailsComponent implements OnInit {
     this.currentPage = 0; // Reset to first page when changing size
     this.loadCars();
   }
-  // sort(field: string) {
-  //   if (this.sortField === field) {
-  //     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-  //   } else {
-  //     this.sortField = field;
-  //     this.sortDirection = 'asc';
-  //   }
-  //   this.loadCars();
-  // }
+
+  // Add these methods
+  openAddCarModal() {
+    this.addCarForm.reset();
+    this.isAddCarModalOpen = true;
+  }
+
+  closeAddCarModal() {
+    this.isAddCarModalOpen = false;
+  }
+
+  onAddCarSubmit() {
+    if (this.addCarForm.valid && this.showroom) {
+      this.isSubmittingCar = true;
+      const carData = {
+        ...this.addCarForm.value,
+        showroomId: this.showroom.commercialRegistrationNumber,
+      };
+
+      this.carService
+        .createCar(this.showroom.commercialRegistrationNumber, carData)
+        .subscribe({
+          next: () => {
+            this.toastService.show('Car added successfully', 'success');
+            this.closeAddCarModal();
+            this.loadCars(); // Refresh the cars list
+          },
+          error: () => {
+            this.isSubmittingCar = false;
+          },
+          complete: () => {
+            this.isSubmittingCar = false;
+          },
+        });
+    } else {
+      Object.keys(this.addCarForm.controls).forEach((key) => {
+        const control = this.addCarForm.get(key);
+        if (control) {
+          control.markAsTouched();
+        }
+      });
+    }
+  }
+
+  isFieldInvalid(form: FormGroup, fieldName: string): boolean {
+    const field = form.get(fieldName);
+    return field ? field.invalid && (field.dirty || field.touched) : false;
+  }
+  isPriceValid(): string | null {
+    const control = this.addCarForm.get('price');
+    if (control?.errors) {
+      if (control.errors['required']) {
+        return 'Price is required';
+      }
+      if (control.errors['min']) {
+        return 'Price must be positive';
+      }
+      if (control.errors['pattern']) {
+        return 'Price must have at most 8 digits before decimal and 2 after';
+      }
+    }
+    return null;
+  }
 }
