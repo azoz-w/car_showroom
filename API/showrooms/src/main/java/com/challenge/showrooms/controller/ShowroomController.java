@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.math.BigDecimal;
-
+@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/api/showroom")
 @RequiredArgsConstructor

@@ -24,7 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-
+@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/api/car")
 @RequiredArgsConstructor
