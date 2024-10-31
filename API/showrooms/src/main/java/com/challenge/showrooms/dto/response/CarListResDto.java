@@ -16,7 +16,7 @@ public class CarListResDto {
     private String maker;
     private String model;
     private BigDecimal modelYear;
-    private BigDecimal amount; // price
+    private BigDecimal price; // price
     private String carShowroomName;
     private BigDecimal contactNumber;
 }

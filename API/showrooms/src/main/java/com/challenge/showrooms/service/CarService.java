@@ -65,7 +65,7 @@ public class CarService {
                 .maker(car.getMaker())
                 .model(car.getModel())
                 .modelYear(car.getModelYear())
-                .amount(car.getPrice())
+                .price(car.getPrice())
                 .carShowroomName(car.getShowroom().getName())
                 .contactNumber(car.getShowroom().getContactNumber())
                 .build();
