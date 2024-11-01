@@ -111,48 +111,125 @@
           </button>
         </div>
 
-        <!-- Search and Filters -->
-        <div class="mb-4 flex gap-4">
-          <div class="flex-1">
-            <!-- <input
-              type="text"
-              [(ngModel)]="searchTerm"
-              (ngModelChange)="onSearch()"
-              placeholder="Search by maker or model..."
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            /> -->
-          </div>
-        </div>
-
         <!-- Cars Table -->
         <div class="overflow-x-auto">
+          @if(isAnyFilterActive()){
+          <div class="mt-2 flex justify-end">
+            <button
+              (click)="clearFilters()"
+              class="text-sm text-gray-600 hover:text-gray-800 flex items-center"
+            >
+              <svg
+                class="w-4 h-4 mr-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+              Clear Filters
+            </button>
+          </div>
+          }
           <table class="min-w-full bg-white">
             <thead>
               <tr>
-                <th
-                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  VIN
+                <!-- VIN Header & Filter -->
+                <th class="px-6 py-3 border-b">
+                  <div class="space-y-2">
+                    <div
+                      class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      VIN
+                    </div>
+                    <input
+                      type="text"
+                      [formControl]="vinControl"
+                      placeholder="Search VIN..."
+                      class="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </th>
-                <th
-                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Maker
+
+                <!-- Maker Header & Filter -->
+                <th class="px-6 py-3 border-b">
+                  <div class="space-y-2">
+                    <div
+                      class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Maker
+                    </div>
+                    <input
+                      type="text"
+                      [formControl]="makerControl"
+                      placeholder="Search maker..."
+                      class="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </th>
-                <th
-                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Model
+
+                <!-- Model Header & Filter -->
+                <th class="px-6 py-3 border-b">
+                  <div class="space-y-2">
+                    <div
+                      class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Model
+                    </div>
+                    <input
+                      type="text"
+                      [formControl]="modelControl"
+                      placeholder="Search model..."
+                      class="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </th>
-                <th
-                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Year
+
+                <!-- Year Header & Filter -->
+                <th class="px-6 py-3 border-b">
+                  <div class="space-y-2">
+                    <div
+                      class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Year
+                    </div>
+                    <input
+                      type="number"
+                      [formControl]="modelYearControl"
+                      placeholder="Year..."
+                      class="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </th>
-                <th
-                  class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Price
+
+                <!-- Price Header & Filter -->
+                <th class="px-6 py-3 border-b">
+                  <div class="space-y-2">
+                    <div
+                      class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Price
+                    </div>
+                    <div class="flex space-x-1">
+                      <input
+                        type="number"
+                        [formControl]="minPriceControl"
+                        placeholder="Min"
+                        class="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <input
+                        type="number"
+                        [formControl]="maxPriceControl"
+                        placeholder="Max"
+                        class="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -165,18 +242,10 @@
               </tr>
               } @else { @for(car of cars; track car.vin){
               <tr>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  {{ car.vin }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  {{ car.maker }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  {{ car.model }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  {{ car.modelYear }}
-                </td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ car.vin }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ car.maker }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ car.model }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ car.modelYear }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   {{ car.price | currency }}
                 </td>
@@ -198,8 +267,9 @@
               Previous
             </button>
             <button
+              [disabled]="currentPage == (totalPages - 1)"
               (click)="changePage(currentPage + 1)"
-              class="px-4 py-2 border rounded"
+              class="px-4 py-2 border rounded disabled:opacity-50"
             >
               Next
             </button>
