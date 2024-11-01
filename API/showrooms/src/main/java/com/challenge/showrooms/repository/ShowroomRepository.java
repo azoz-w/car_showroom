@@ -15,4 +15,5 @@ public interface ShowroomRepository extends JpaRepository<Showroom, Long> {
     Optional<Showroom> findByIdAndDeletedFalse(Long id);
     Optional<Showroom> findByCommercialRegistrationNumberAndDeletedFalse(BigDecimal commercialRegistrationNumber);
     boolean existsByCommercialRegistrationNumber(BigDecimal commercialRegistrationNumber);
+    boolean existsByCommercialRegistrationNumberAndDeletedFalse(BigDecimal commercialRegistrationNumber);
 }

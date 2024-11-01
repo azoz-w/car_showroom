@@ -11,12 +11,14 @@ import java.math.BigDecimal;
 
 public class CarSpecifications {
 
-    public static Specification<Car> withFilters(CarSearchCriteria criteria) {
+    public static Specification<Car> withFilters(BigDecimal commercialRegistrationNumber, CarSearchCriteria criteria) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Only include non-deleted cars
+            // Base conditions
             predicates.add(cb.equal(root.get("deleted"), false));
+            predicates.add(cb.equal(root.get("showroom").get("commercialRegistrationNumber"),
+                    commercialRegistrationNumber));
 
             // VIN search
             if (criteria.getVin() != null && !criteria.getVin().isEmpty()) {
@@ -53,22 +55,6 @@ public class CarSpecifications {
             }
             if (criteria.getMaxPrice() != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("price"), criteria.getMaxPrice()));
-            }
-
-            // Showroom name search
-            if (criteria.getShowroomName() != null && !criteria.getShowroomName().isEmpty()) {
-                predicates.add(cb.like(
-                        cb.lower(root.join("showroom").get("name")),
-                        "%" + criteria.getShowroomName().toLowerCase() + "%"
-                ));
-            }
-
-            // Showroom contact number search
-            if (criteria.getContactNumber() != null) {
-                predicates.add(cb.equal(
-                        root.join("showroom").get("contactNumber"),
-                        criteria.getContactNumber()
-                ));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

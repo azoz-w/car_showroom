@@ -55,12 +55,30 @@ public class CarService {
         return mapToResponse(savedCar);
     }
 
-    public Page<CarListResDto> findAllWithFilters(CarSearchCriteria criteria, Pageable pageable) {
+    public Page<CarListResDto> findAllWithFilters(
+            BigDecimal commercialRegistrationNumber,
+            CarSearchCriteria criteria,
+            Pageable pageable) {
+
+        // Verify showroom exists
+        if (!showroomRepository.existsByCommercialRegistrationNumberAndDeletedFalse(commercialRegistrationNumber)) {
+            throw new ResourceNotFoundException("Showroom not found with registration number: " + commercialRegistrationNumber);
+        }
+
         Page<Car> cars = carRepository.findAll(
-                CarSpecifications.withFilters(criteria),
+                CarSpecifications.withFilters(commercialRegistrationNumber, criteria),
                 pageable
         );
-        return cars.map(this::mapToListResponse);
+
+        return cars.map(car -> CarListResDto.builder()
+                .vin(car.getVin())
+                .maker(car.getMaker())
+                .model(car.getModel())
+                .modelYear(car.getModelYear())
+                .price(car.getPrice())
+                .carShowroomName(car.getShowroom().getName())
+                .contactNumber(car.getShowroom().getContactNumber())
+                .build());
     }
 
     private CarListResDto mapToListResponse(Car car) {

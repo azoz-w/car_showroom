@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/car")
 @RequiredArgsConstructor
@@ -77,8 +77,9 @@ public class CarController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
     })
-    @GetMapping
+    @GetMapping("/{commercialRegistrationNumber}")
     public Page<CarListResDto> listCars(
+            @PathVariable BigDecimal commercialRegistrationNumber,
             @RequestParam(required = false) String vin,
             @RequestParam(required = false) String maker,
             @RequestParam(required = false) String model,
@@ -108,6 +109,6 @@ public class CarController {
                 sort
         );
 
-        return carService.findAllWithFilters(criteria, pageRequest);
+        return carService.findAllWithFilters(commercialRegistrationNumber, criteria, pageRequest);
     }
 }
