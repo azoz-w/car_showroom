@@ -2,12 +2,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CarSearchCriteria } from '../models/car.criteria.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CarService {
-  private apiUrl = 'http://localhost:8080/api/car';
+  private readonly API_URL = `${environment.apiUrl}/car`;
 
   constructor(private http: HttpClient) {}
 
@@ -34,14 +35,14 @@ export class CarService {
       });
     }
 
-    return this.http.get(`${this.apiUrl}/${commercialRegistrationNumber}`, { params });
+    return this.http.get(`${this.API_URL}/${commercialRegistrationNumber}`, { params });
   }
   createCar(
     commercialRegistrationNumber: string,
     carData: any
   ): Observable<any> {
     return this.http.post(
-      `${this.apiUrl}/${commercialRegistrationNumber}`,
+      `${this.API_URL}/${commercialRegistrationNumber}`,
       carData
     );
   }

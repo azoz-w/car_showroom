@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Showroom } from '../models/showroom.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ShowroomService {
-  private apiUrl = 'http://localhost:8080/api/showroom';
+  private readonly API_URL = `${environment.apiUrl}/showroom`;
 
   constructor(private http: HttpClient) {}
 
@@ -21,16 +22,16 @@ export class ShowroomService {
       .set('sort', sort)
       .set('direction', direction);
 
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<any>(this.API_URL, { params });
   }
 
   createShowroom(showroom: Showroom): Observable<Showroom> {
-    return this.http.post<Showroom>(this.apiUrl, showroom);
+    return this.http.post<Showroom>(this.API_URL, showroom);
   }
 
   getShowroom(commercialRegistrationNumber: string): Observable<Showroom> {
     return this.http.get<Showroom>(
-      `${this.apiUrl}/${commercialRegistrationNumber}`
+      `${this.API_URL}/${commercialRegistrationNumber}`
     );
   }
 
@@ -39,14 +40,14 @@ export class ShowroomService {
     showroom: Partial<Showroom>
   ): Observable<Showroom> {
     return this.http.patch<Showroom>(
-      `${this.apiUrl}/${commercialRegistrationNumber}`,
+      `${this.API_URL}/${commercialRegistrationNumber}`,
       showroom
     );
   }
 
   deleteShowroom(commercialRegistrationNumber: string): Observable<void> {
     return this.http.delete<void>(
-      `${this.apiUrl}/${commercialRegistrationNumber}`
+      `${this.API_URL}/${commercialRegistrationNumber}`
     );
   }
 }
