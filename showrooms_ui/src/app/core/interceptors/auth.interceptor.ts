@@ -1,50 +1,46 @@
-// src/app/core/interceptors/auth.interceptor.ts
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
-export const AuthInterceptor: HttpInterceptorFn = (
-  request: HttpRequest<unknown>,
-  next: HttpHandlerFn
-) => {
+export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const AUTH_HEADER = 'Authorization';
-  const TOKEN_PREFIX = 'Bearer ';
   const EXCLUDED_PATHS = ['/api/auth/login'];
 
   // Don't add token for authentication endpoints
-  if (isPublicPath(request.url)) {
-    return next(request);
+  if (isPublicPath(req.url)) {
+    return next(req);
   }
 
   // Add token if available
   const token = localStorage.getItem('token');
   if (token) {
-    request = addToken(request, token);
+    req = req.clone({
+      headers: req.headers.set('Authorization', `Bearer ${token}`),
+    });
   }
 
-  return next(request).pipe(
-    catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
-        // Unauthorized - clear token and redirect to login
-        localStorage.removeItem('token');
-        router.navigate(['/login']);
-      } else if (error.status === 403) {
-        // Forbidden - could handle differently if needed
-        console.error('Access forbidden');
+  return next(req).pipe(
+    catchError((error) => {
+      if (error.status === 401 || error.status === 403) {
+        // Clear local storage
+        localStorage.clear();
+
+        // Get current URL for redirect after login
+        const currentUrl = window.location.pathname;
+
+        // Navigate to login with return URL
+        router.navigate(['/login'], {
+          queryParams: {
+            returnUrl: currentUrl,
+          },
+        });
       }
       return throwError(() => error);
     })
   );
+
+  function isPublicPath(url: string): boolean {
+    return EXCLUDED_PATHS.some((path) => url.includes(path));
+  }
 };
-
-function addToken(request: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
-  return request.clone({
-    headers: request.headers.set('Authorization', `Bearer ${token}`)
-  });
-}
-
-function isPublicPath(url: string): boolean {
-  return ['/api/auth/login'].some(path => url.includes(path));
-}

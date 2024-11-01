@@ -11,6 +11,7 @@ export const routes: Routes = [
       import('./features/showroom/showroom.module').then(
         (m) => m.ShowroomModule
       ),
+    canActivateChild: [authGuard],
     canActivate: [authGuard],
   },
   {
