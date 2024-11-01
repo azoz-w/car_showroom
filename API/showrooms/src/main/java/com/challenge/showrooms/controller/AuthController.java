@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -25,28 +26,6 @@ public class AuthController {
     private UserDetailsService userDetailsService;
     @Autowired
     private JwtService jwtService;
-
-//    @PostMapping("/login")
-//    @ResponseStatus(HttpStatus.ACCEPTED)
-//    public LoginResDto authenticate(
-//            @Valid @RequestBody LoginReqDto request
-//    ) {
-//        System.out.println("testing");
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        request.getUsername(),
-//                        request.getPassword()
-//                )
-//        );
-//
-//        UserDetails user = userService.loadUserByUsername(request.getUsername());
-//        String jwtToken = jwtService.generateToken(user);
-//
-//        return LoginResDto.builder()
-//                .token(jwtToken)
-//                .username(user.getUsername())
-//                .build();
-//    }
 
     @PostMapping("/login")
     public LoginResDto authenticate(@RequestBody LoginReqDto request) {
