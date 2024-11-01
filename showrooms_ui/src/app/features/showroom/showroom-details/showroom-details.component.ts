@@ -8,11 +8,20 @@ import {
   FormBuilder,
   Validators,
   ReactiveFormsModule,
+  FormControl,
 } from '@angular/forms';
 import { ToastService } from '../../../core/services/toast.service';
 import { Car } from '../../../core/models/car.model';
 import { CarService } from '../../../core/services/car.service';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  merge,
+  Subject,
+  takeUntil,
+} from 'rxjs';
+import { CarSearchCriteria } from '../../../core/models/car.criteria.model';
 
 @Component({
   selector: 'app-showroom-details',
@@ -23,6 +32,7 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
 })
 export class ShowroomDetailsComponent implements OnInit {
   showroom: Showroom | null = null;
+  commercialRegistrationNumber: string = '';
   isEditing = false;
   isSubmitting = false;
   editForm: FormGroup;
@@ -38,6 +48,9 @@ export class ShowroomDetailsComponent implements OnInit {
   isAddCarModalOpen = false;
   addCarForm: FormGroup;
   isSubmittingCar = false;
+  searchForm: FormGroup;
+  searchDebouncer = new Subject<void>();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
@@ -47,6 +60,23 @@ export class ShowroomDetailsComponent implements OnInit {
     private carService: CarService,
     private toastService: ToastService
   ) {
+    this.searchForm = this.fb.group({
+      vin: new FormControl(''),
+      maker: new FormControl(''),
+      model: new FormControl(''),
+      modelYear: new FormControl(''),
+      minPrice: new FormControl(''),
+      maxPrice: new FormControl(''),
+    });
+    // Setup search debouncing
+    this.searchDebouncer
+      .pipe(debounceTime(1), distinctUntilChanged())
+      .subscribe(() => {
+        console.log('debouncing');
+        this.currentPage = 0; // Reset to first page on new search
+        this.loadCars(this.commercialRegistrationNumber);
+      });
+
     this.editForm = this.fb.group({
       contactNumber: [
         '',
@@ -76,10 +106,35 @@ export class ShowroomDetailsComponent implements OnInit {
       const commercialRegistrationNumber =
         params['commercialRegistrationNumber'];
       if (commercialRegistrationNumber) {
+        this.commercialRegistrationNumber = commercialRegistrationNumber;
         this.loadShowroomDetails(commercialRegistrationNumber);
-        this.loadCars(); // Load cars after loading showroom details
+        this.loadCars(commercialRegistrationNumber); // Load cars after loading showroom details
       }
     });
+    // Subscribe to form changes
+    this.vinControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.onSearchChange());
+
+    this.makerControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.onSearchChange());
+
+    this.modelControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.onSearchChange());
+
+    this.modelYearControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.onSearchChange());
+
+    this.minPriceControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.onSearchChange());
+
+    this.maxPriceControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.onSearchChange());
   }
 
   loadShowroomDetails(commercialRegistrationNumber: string) {
@@ -136,21 +191,27 @@ export class ShowroomDetailsComponent implements OnInit {
   goBack() {
     this.router.navigate(['/showrooms']);
   }
-  loadCars() {
+  loadCars(commercialRegistrationNumber: string) {
     // if (!this.showroom) return;
 
     this.isLoading = true;
+    const criteria: CarSearchCriteria = this.getValidSearchCriteria();
+
     this.carService
       .getShowroomCars(
-        // this.showroom.commercialRegistrationNumber,
+        commercialRegistrationNumber,
         this.currentPage,
         this.pageSize,
         this.searchTerm,
-        this.sortDirection
-        // this.searchTerm
+        this.sortDirection,
+        criteria
       )
       .subscribe({
         next: (response) => {
+          console.log(
+            'is it the last page,:' + (this.currentPage === this.totalPages - 1)
+          );
+
           this.cars = response.content;
           this.totalPages = response.totalPages;
           this.totalItems = response.totalElements;
@@ -164,21 +225,24 @@ export class ShowroomDetailsComponent implements OnInit {
 
   onSearch() {
     this.currentPage = 0;
-    this.loadCars();
+    this.loadCars(this.showroom?.commercialRegistrationNumber ?? '');
   }
 
   changePage(page: number) {
     this.currentPage = page;
-    this.loadCars();
+    this.loadCars(this.showroom?.commercialRegistrationNumber ?? '');
   }
   changeSize(newSize: string | number | any) {
     console.log(newSize);
 
     this.pageSize = newSize;
     this.currentPage = 0; // Reset to first page when changing size
-    this.loadCars();
+    this.loadCars(this.showroom?.commercialRegistrationNumber ?? '');
   }
-
+  onSearchChange() {
+    this.currentPage = 0; // Reset to first page
+    this.loadCars(this.commercialRegistrationNumber);
+  }
   // Add these methods
   openAddCarModal() {
     this.addCarForm.reset();
@@ -203,7 +267,7 @@ export class ShowroomDetailsComponent implements OnInit {
           next: () => {
             this.toastService.show('Car added successfully', 'success');
             this.closeAddCarModal();
-            this.loadCars(); // Refresh the cars list
+            this.loadCars(this.showroom?.commercialRegistrationNumber ?? ''); // Refresh the cars list
           },
           error: () => {
             this.isSubmittingCar = false;
@@ -221,7 +285,12 @@ export class ShowroomDetailsComponent implements OnInit {
       });
     }
   }
-
+  isAnyFilterActive(): boolean {
+    const formValue = this.searchForm.value;
+    return Object.values(formValue).some(
+      (value) => value !== null && value !== '' && value !== undefined
+    );
+  }
   isFieldInvalid(form: FormGroup, fieldName: string): boolean {
     const field = form.get(fieldName);
     return field ? field.invalid && (field.dirty || field.touched) : false;
@@ -240,5 +309,48 @@ export class ShowroomDetailsComponent implements OnInit {
       }
     }
     return null;
+  }
+  getValidSearchCriteria(): CarSearchCriteria {
+    const formValue = this.searchForm.value;
+    const criteria: CarSearchCriteria = {};
+
+    // Only add non-empty values
+    if (formValue.vin?.trim()) criteria.vin = formValue.vin.trim();
+    if (formValue.maker?.trim()) criteria.maker = formValue.maker.trim();
+    if (formValue.model?.trim()) criteria.model = formValue.model.trim();
+    if (formValue.modelYear) criteria.modelYear = Number(formValue.modelYear);
+    if (formValue.minPrice) criteria.minPrice = Number(formValue.minPrice);
+    if (formValue.maxPrice) criteria.maxPrice = Number(formValue.maxPrice);
+
+    return criteria;
+  }
+  clearFilters() {
+    this.searchForm.reset();
+    this.currentPage = 0;
+    this.loadCars(this.commercialRegistrationNumber);
+  }
+  // Helper getters for form controls
+  get vinControl() {
+    return this.searchForm.get('vin') as FormControl;
+  }
+  get makerControl() {
+    return this.searchForm.get('maker') as FormControl;
+  }
+  get modelControl() {
+    return this.searchForm.get('model') as FormControl;
+  }
+  get modelYearControl() {
+    return this.searchForm.get('modelYear') as FormControl;
+  }
+  get minPriceControl() {
+    return this.searchForm.get('minPrice') as FormControl;
+  }
+  get maxPriceControl() {
+    return this.searchForm.get('maxPrice') as FormControl;
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
