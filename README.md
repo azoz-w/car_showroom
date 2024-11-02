@@ -18,7 +18,7 @@ Clone the repository and start the database using Docker Compose:
 ```bash
 # Clone the repository
 git clone https://github.com/azoz-w/car_showroom.git
-cd showroom-management
+cd car_showroom
 
 # Start PostgreSQL container
 docker-compose up -d
