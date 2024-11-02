@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "1edb948f-4a39-4622-8360-c8bee7c0672b",
 		"name": "showrooms challenge",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "28609436"
 	},
 	"item": [
@@ -52,7 +52,19 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:8080/api/showroom/2234562894"
+						"url": {
+							"raw": "http://localhost:8080/api/showroom/987654321",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"showroom",
+								"987654321"
+							]
+						}
 					},
 					"response": []
 				},
@@ -70,7 +82,18 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/api/showroom"
+						"url": {
+							"raw": "http://localhost:8080/api/showroom",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"showroom"
+							]
+						}
 					},
 					"response": []
 				},
@@ -79,7 +102,19 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "http://localhost:8080/api/showroom/2234562895"
+						"url": {
+							"raw": "http://localhost:8080/api/showroom/987654321",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"showroom",
+								"987654321"
+							]
+						}
 					},
 					"response": []
 				},
@@ -97,7 +132,19 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/api/showroom/223456289"
+						"url": {
+							"raw": "http://localhost:8080/api/showroom/223456289",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"showroom",
+								"223456289"
+							]
+						}
 					},
 					"response": []
 				}
@@ -173,7 +220,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/car/1234567898?page=1&size=5&sortBy=maker&direction=desc&vin=fj&maxPrice=40000",
+							"raw": "http://localhost:8080/api/car/1234567898",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -183,32 +230,6 @@
 								"api",
 								"car",
 								"1234567898"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "size",
-									"value": "5"
-								},
-								{
-									"key": "sortBy",
-									"value": "maker"
-								},
-								{
-									"key": "direction",
-									"value": "desc"
-								},
-								{
-									"key": "vin",
-									"value": "fj"
-								},
-								{
-									"key": "maxPrice",
-									"value": "40000"
-								}
 							]
 						}
 					},
@@ -249,7 +270,19 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/api/auth/login"
+						"url": {
+							"raw": "http://localhost:8080/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
 					},
 					"response": []
 				}
@@ -258,9 +291,13 @@
 	],
 	"auth": {
 		"type": "bearer",
-		"bearer": {
-			"token": "{{token}}"
-		}
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
 	},
 	"event": [
 		{
