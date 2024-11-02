@@ -132,5 +132,4 @@ Migrations are handled by Flyway and run automatically when the application star
 Location: `API/showrooms/src/main/resources/db/migration`
 
 ## Assumptions 
-1. Car list api is assumed to be fetched with regards to a showroom commercial registration number, for use in the showroom details api
-2. 
+1. Car list api is assumed to be fetched with regards to a showroom commercial registration number, for use in the showroom details api.
