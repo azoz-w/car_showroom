@@ -1,0 +1,293 @@
+{
+	"info": {
+		"_postman_id": "1edb948f-4a39-4622-8360-c8bee7c0672b",
+		"name": "showrooms challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "28609436"
+	},
+	"item": [
+		{
+			"name": "showrooms",
+			"item": [
+				{
+					"name": "get showrooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/showroom?page=0&size=10&sort=commercialRegistrationNumber&direction=desc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"showroom"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sort",
+									"value": "commercialRegistrationNumber"
+								},
+								{
+									"key": "direction",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get showroom",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/showroom/2234562894"
+					},
+					"response": []
+				},
+				{
+					"name": "add showroom",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"khurais1 genisis\",\n    \"commercialRegistrationNumber\":\"4234562881\",\n    \"managerName\":\"aziz\",\n    \"contactNumber\":\"053456789456789\",\n    \"address\":\"1234, road, district, city, zipcode\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/showroom"
+					},
+					"response": []
+				},
+				{
+					"name": "delete showroom",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/api/showroom/2234562895"
+					},
+					"response": []
+				},
+				{
+					"name": "update showroom",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    // \"contactNumber\": \"971501234544\"\n    \"managerName\": \"doe Smith2\",\n    \"address\": \"12456 Business Bay, Dubai\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/showroom/223456289"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cars",
+			"item": [
+				{
+					"name": "get Cars",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/car/1234567898?page=1&size=5&sortBy=maker&direction=desc&vin=fj&maxPrice=40000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"car",
+								"1234567898"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "sortBy",
+									"value": "maker"
+								},
+								{
+									"key": "direction",
+									"value": "desc"
+								},
+								{
+									"key": "maker",
+									"value": "toyota",
+									"disabled": true
+								},
+								{
+									"key": "vin",
+									"value": "fj"
+								},
+								{
+									"key": "maxPrice",
+									"value": "40000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Car",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vin\": \"BJ$02345667\",\n    \"maker\": \"TOYOTA\",\n    \"model\": \"LAND CRUISER\",\n    \"modelYear\": 1984,\n    \"price\": 40000.00\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/car/1234567898?page=1&size=5&sortBy=maker&direction=desc&vin=fj&maxPrice=40000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"car",
+								"1234567898"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "sortBy",
+									"value": "maker"
+								},
+								{
+									"key": "direction",
+									"value": "desc"
+								},
+								{
+									"key": "vin",
+									"value": "fj"
+								},
+								{
+									"key": "maxPrice",
+									"value": "40000"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"token\", jsonData.token); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"admin\",\n    \"password\":\"admin123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/auth/login"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{token}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
