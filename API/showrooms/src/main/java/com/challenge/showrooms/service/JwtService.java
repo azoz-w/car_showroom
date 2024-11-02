@@ -17,14 +17,14 @@ import java.util.function.Function;
 public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
-
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 ; // 1 hour
+    @Value("${jwt.expiration}")
+    private String EXPIRATION_TIME; // 1 hour
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(EXPIRATION_TIME)))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
